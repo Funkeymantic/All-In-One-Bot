@@ -4,15 +4,23 @@ import discord
 import asyncio
 import aiohttp
 from datetime import datetime
-import os
 from dotenv import load_dotenv
+import os
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Tokens from environment variables
+# Debugging: print to ensure tokens are loaded
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 TWITCH_TOKEN = os.getenv("TWITCH_TOKEN")
+TWITCH_CLIENT_ID = os.getenv("TWITCH_CLIENT_ID")
+
+print(f"DISCORD_TOKEN: {DISCORD_TOKEN}")
+print(f"TWITCH_TOKEN: {TWITCH_TOKEN}")
+print(f"TWITCH_CLIENT_ID: {TWITCH_CLIENT_ID}")
+
+if TWITCH_TOKEN is None:
+    raise ValueError("TWITCH_TOKEN is not set! Please check your environment variables.")
+
 
 # Define Discord intents
 intents = discord.Intents.default()
@@ -52,6 +60,9 @@ async def on_voice_state_update(member, before, after):
 # Twitch bot class
 class TwitchBot(twitch_commands.Bot):
     def __init__(self):
+        if TWITCH_TOKEN is None:
+            raise ValueError("TWITCH_TOKEN is not set! Please check your .env file or environment variables.")
+        
         super().__init__(token=TWITCH_TOKEN, prefix='~', initial_channels=['funkeymantic'])
 
     async def event_ready(self):
