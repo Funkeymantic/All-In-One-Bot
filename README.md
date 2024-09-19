@@ -34,6 +34,6 @@ The All-In-One Bot is a versatile bot designed to integrate with Twitch, Discord
 ### Step 1: Clone the Repository
 
 ```bash
-git clone git@github.com:Funkeymantic/All-In-One-Bot.git
 cd All-In-One-Bot
+git pull origin main
 
