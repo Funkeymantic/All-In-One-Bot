@@ -36,4 +36,6 @@ The All-In-One Bot is a versatile bot designed to integrate with Twitch, Discord
 ```bash
 cd All-In-One-Bot
 git pull origin main
+/home/pcmartin/startup_script.sh
+
 
