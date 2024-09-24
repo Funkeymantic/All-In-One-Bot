@@ -27,7 +27,30 @@ source "$REPO_DIR/.venv/bin/activate"
 function update_repository {
     echo "Checking for updates..."
     cd "$REPO_DIR" || exit
+<<<<<<< HEAD
     git fetch origin
+=======
+    git fetch origin main
+
+    # Handle divergent branches by merging
+    git config pull.rebase false
+
+    if git pull origin main; then
+        echo "Repository updated."
+        return 1
+    else
+        echo "Pull failed, trying to resolve conflicts..."
+        git merge --abort
+        git pull --rebase
+        return 1
+    fi
+}
+
+# Check for updates and stop the bot if there were changes
+update_repository
+echo "Stopping the bot if it's running..."
+pkill -f "python3 $REPO_DIR/main.py"
+>>>>>>> 9a1462d64dbc54af7b4bf7f0bb39a2e3d78771e7
 
     # Handle divergent branches by merging
     git config pull.rebase false
@@ -64,8 +87,17 @@ git commit -m "Automated commit and push from script."
 # Get the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
+<<<<<<< HEAD
 # Push to the correct branch
 echo "Pushing to GitHub..."
 git push origin "$BRANCH_NAME"
+=======
+# Push to the correct branch and force push if necessary
+echo "Pushing to GitHub..."
+if ! git push origin "$BRANCH_NAME"; then
+    echo "Push failed, forcing push..."
+    git push --force origin "$BRANCH_NAME"
+fi
+>>>>>>> 9a1462d64dbc54af7b4bf7f0bb39a2e3d78771e7
 echo "Push complete."
 
