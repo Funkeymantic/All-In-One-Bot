@@ -34,6 +34,7 @@ else
 fi
 
 # Activate the virtual environment
+echo "Activating virtual environment..."
 source "$REPO_DIR/.venv/bin/activate"
 
 # Check for updates and restart the bot if there were changes
@@ -44,6 +45,22 @@ else
     pkill -f "python3 $REPO_DIR/main.py"  # Stop the bot if it's running
 fi
 
-# Run the bot
-nohup python3 "$REPO_DIR/main.py" > "$REPO_DIR/bot.log" 2>&1 &
-echo "Bot started with PID $!"
+# Check if the bot is already running
+if pgrep -f "python3 $REPO_DIR/main.py" > /dev/null
+then
+    echo "Bot is already running."
+else
+    # Run the bot
+    echo "Attempting to start the bot..."
+    nohup python3 "$REPO_DIR/main.py" > "$REPO_DIR/bot.log" 2>&1 &
+    echo "Bot started with PID $!"
+fi
+
+# Stage, commit, and push any local changes to the remote repository
+echo "Staging local changes..."
+git add .
+echo "Committing changes..."
+git commit -m "Automated commit and push from script."
+echo "Pushing to GitHub..."
+git push origin main
+echo "Push complete."
