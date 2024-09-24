@@ -74,7 +74,7 @@ TWITCH_CLIENT_ID=your_twitch_client_id
 To start the bot, run the following command:
 
 ```bash
-
+cd All-In-One-Bot
 ./commit_an_push.sh
 ```
 
