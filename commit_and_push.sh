@@ -37,24 +37,15 @@ fi
 echo "Activating virtual environment..."
 source "$REPO_DIR/.venv/bin/activate"
 
-# Check for updates and restart the bot if there were changes
-if update_repository; then
-    echo "No updates found. Running the bot as usual."
-else
-    echo "Repository was updated. Restarting the bot..."
-    pkill -f "python3 $REPO_DIR/main.py"  # Stop the bot if it's running
-fi
+# Check for updates and stop the bot if there were changes
+update_repository
+echo "Stopping the bot if it's running..."
+pkill -f "python3 $REPO_DIR/main.py"
 
-# Check if the bot is already running
-if pgrep -f "python3 $REPO_DIR/main.py" > /dev/null
-then
-    echo "Bot is already running."
-else
-    # Run the bot
-    echo "Attempting to start the bot..."
-    nohup python3 "$REPO_DIR/main.py" > "$REPO_DIR/bot.log" 2>&1 &
-    echo "Bot started with PID $!"
-fi
+# Run the bot
+echo "Starting the bot..."
+nohup python3 "$REPO_DIR/main.py" > "$REPO_DIR/bot.log" 2>&1 &
+echo "Bot started with PID $!"
 
 # Stage, commit, and push any local changes to the remote repository
 echo "Staging local changes..."
