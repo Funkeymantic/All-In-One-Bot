@@ -41,9 +41,9 @@ if update_repository; then
     echo "No updates found. Running the bot as usual."
 else
     echo "Repository was updated. Restarting the bot..."
-    pkill -f "python3 $REPO_DIR/Discord Bot.py"  # Stop the bot if it's running
+    pkill -f "python3 $REPO_DIR/main.py"  # Stop the bot if it's running
 fi
 
 # Run the bot
-nohup python3 "$REPO_DIR/Discord Bot.py" > "$REPO_DIR/bot.log" 2>&1 &
+nohup python3 "$REPO_DIR/main.py" > "$REPO_DIR/bot.log" 2>&1 &
 echo "Bot started."
