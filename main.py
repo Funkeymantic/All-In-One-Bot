@@ -63,15 +63,13 @@ async def twitch_live_notifier():
         # Sleep for 5 minutes before checking again
         await asyncio.sleep(300)
 
-# Function to start both the Discord and Twitch bots
-async def run_bots():
-    print("Starting Discord and Twitch bots...")
+# Function to start both the Discord and Twitch botsasync def run_bots():
     await asyncio.gather(
         start_discord_bot(DISCORD_TOKEN),
         start_twitch_bot(),
         twitch_live_notifier()
     )
-   print("Both bots are running.")
+    print("Both bots are running.")
 
 # Entry point for the script
 if __name__ == "__main__":
