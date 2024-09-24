@@ -75,7 +75,7 @@ To start the bot, run the following command:
 
 ```bash
 
-python main.py
+./commit_an_push.sh
 ```
 
 This will start both the Discord and Twitch bots concurrently.
