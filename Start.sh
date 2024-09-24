@@ -23,60 +23,51 @@ fi
 echo "Activating virtual environment..."
 source "$REPO_DIR/.venv/bin/activate"
 
-# Function to pull the latest changes and handle divergent branches
+# Function to pull the latest changes and handle conflicts
 function update_repository {
     echo "Checking for updates..."
     cd "$REPO_DIR" || exit
-<<<<<<< HEAD
-    git fetch origin
-=======
-    git fetch origin main
 
-    # Handle divergent branches by merging
-    git config pull.rebase false
-
-    if git pull origin main; then
-        echo "Repository updated."
-        return 1
+    # Stash any local changes
+    if ! git diff-index --quiet HEAD --; then
+        echo "Stashing local changes..."
+        git stash
+        STASHED=true
     else
-        echo "Pull failed, trying to resolve conflicts..."
-        git merge --abort
-        git pull --rebase
-        return 1
+        STASHED=false
     fi
-}
 
-# Check for updates and stop the bot if there were changes
-update_repository
-echo "Stopping the bot if it's running..."
-pkill -f "python3 $REPO_DIR/main.py"
->>>>>>> 9a1462d64dbc54af7b4bf7f0bb39a2e3d78771e7
+    git fetch origin
 
     # Handle divergent branches by merging
     git config pull.rebase false
 
     if git pull origin $(git rev-parse --abbrev-ref HEAD); then
         echo "Repository updated."
-        return 1
     else
-        echo "Pull failed, conflicts might be present."
+        echo "Merge failed or conflicts present. Aborting."
         return 0
     fi
+
+    # Reapply stashed changes if any
+    if [ "$STASHED" = true ]; then
+        echo "Reapplying stashed changes..."
+        git stash pop
+    fi
+    return 1
 }
 
 # Check for updates and stop the bot if there were changes
-if update_repository; then
-    echo "Stopping the bot if it's running..."
-    pkill -f "python3 $REPO_DIR/main.py"
+update_repository
 
-    # Run the bot
-    echo "Starting the bot..."
-    nohup python3 "$REPO_DIR/main.py" > "$REPO_DIR/bot.log" 2>&1 &
-    echo "Bot started with PID $!"
-else
-    echo "Conflicts detected or pull failed. Please resolve them manually."
-    exit 1
-fi
+# Stop the bot if it's running
+echo "Stopping the bot if it's running..."
+pkill -f "python3 $REPO_DIR/main.py"
+
+# Run the bot regardless of the update result
+echo "Starting the bot..."
+nohup python3 "$REPO_DIR/main.py" > "$REPO_DIR/bot.log" 2>&1 &
+echo "Bot started with PID $!"
 
 # Stage, commit, and push any local changes to the remote repository
 echo "Staging local changes..."
@@ -87,17 +78,8 @@ git commit -m "Automated commit and push from script."
 # Get the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
-<<<<<<< HEAD
 # Push to the correct branch
 echo "Pushing to GitHub..."
 git push origin "$BRANCH_NAME"
-=======
-# Push to the correct branch and force push if necessary
-echo "Pushing to GitHub..."
-if ! git push origin "$BRANCH_NAME"; then
-    echo "Push failed, forcing push..."
-    git push --force origin "$BRANCH_NAME"
-fi
->>>>>>> 9a1462d64dbc54af7b4bf7f0bb39a2e3d78771e7
 echo "Push complete."
 
