@@ -23,21 +23,22 @@ fi
 echo "Activating virtual environment..."
 source "$REPO_DIR/.venv/bin/activate"
 
-# Function to pull the latest changes
+# Function to pull the latest changes and handle divergent branches
 function update_repository {
     echo "Checking for updates..."
     cd "$REPO_DIR" || exit
     git fetch origin main
-    LOCAL=$(git rev-parse @)
-    REMOTE=$(git rev-parse @{u})
 
-    if [ "$LOCAL" = "$REMOTE" ]; then
-        echo "Already up to date."
-        return 0
-    else
-        echo "Updating repository..."
-        git pull origin main
+    # Handle divergent branches by merging
+    git config pull.rebase false
+
+    if git pull origin main; then
         echo "Repository updated."
+        return 1
+    else
+        echo "Pull failed, trying to resolve conflicts..."
+        git merge --abort
+        git pull --rebase
         return 1
     fi
 }
@@ -61,7 +62,10 @@ git commit -m "Automated commit and push from script."
 # Get the current branch name
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
-# Push to the correct branch
+# Push to the correct branch and force push if necessary
 echo "Pushing to GitHub..."
-git push origin "$BRANCH_NAME"
+if ! git push origin "$BRANCH_NAME"; then
+    echo "Push failed, forcing push..."
+    git push --force origin "$BRANCH_NAME"
+fi
 echo "Push complete."
