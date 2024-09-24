@@ -6,6 +6,23 @@ REPO_DIR="/home/pcmartin/All-In-One-Bot"
 # GitHub repository URL
 REPO_URL="git@github.com:Funkeymantic/All-In-One-Bot.git"
 
+# Check if the repository directory exists and is a git repository
+if [ -d "$REPO_DIR/.git" ]; then
+    echo "Repository found."
+else
+    echo "Cloning the repository..."
+    git clone "$REPO_URL" "$REPO_DIR"
+fi
+
+# Activate the virtual environment
+if [ ! -d "$REPO_DIR/.venv" ]; then
+    echo "Virtual environment not found. Creating one..."
+    python3 -m venv "$REPO_DIR/.venv"
+fi
+
+echo "Activating virtual environment..."
+source "$REPO_DIR/.venv/bin/activate"
+
 # Function to pull the latest changes
 function update_repository {
     echo "Checking for updates..."
@@ -25,18 +42,6 @@ function update_repository {
     fi
 }
 
-# Check if the repository directory exists and is a git repository
-if [ -d "$REPO_DIR/.git" ]; then
-    echo "Repository found."
-else
-    echo "Cloning the repository..."
-    git clone "$REPO_URL" "$REPO_DIR"
-fi
-
-# Activate the virtual environment
-echo "Activating virtual environment..."
-source "$REPO_DIR/.venv/bin/activate"
-
 # Check for updates and stop the bot if there were changes
 update_repository
 echo "Stopping the bot if it's running..."
@@ -52,6 +57,12 @@ echo "Staging local changes..."
 git add .
 echo "Committing changes..."
 git commit -m "Automated commit and push from script."
+
+# Get the current branch name
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+# Push to the correct branch
 echo "Pushing to GitHub..."
-git push origin main
+git push origin "$BRANCH_NAME"
 echo "Push complete."
+
