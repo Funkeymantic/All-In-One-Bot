@@ -83,3 +83,5 @@ echo "Pushing to GitHub..."
 git push origin "$BRANCH_NAME"
 echo "Push complete."
 
+python3 /home/pcmartin/All-In-One-Bot/main.py
+
