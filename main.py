@@ -35,4 +35,13 @@ async def run_bots():
     print("Both bots are running.")
 
 # Run the bots
-if __name__
+if __name__ == "__main__":
+    print("Running bots...")
+    try:
+        print("Running bots...")
+        asyncio.run(run_bots())
+        print("Bots are now running.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        with open("/home/pcmartin/All-In-One-Bot/error.log", "a") as error_file:
+            error_file.write(f"{str(e)}\n")
