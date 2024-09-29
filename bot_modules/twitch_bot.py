@@ -1,5 +1,3 @@
-# bot_modules/twitch_bot.py
-
 from twitchio.ext import commands as twitch_commands
 from .helpers import print_with_timestamp
 import os
@@ -11,7 +9,7 @@ class TwitchBot(twitch_commands.Bot):
         if os.getenv("TWITCH_TOKEN") is None:
             raise ValueError("TWITCH_TOKEN is not set! Please check your .env file or environment variables.")
         
-        super().__init__(token=os.getenv("TWITCH_TOKEN"), prefix='~', initial_channels=['funkeymantic'])
+        super().__init__(token=os.getenv("TWITCH_TOKEN"), prefix='!', initial_channels=['funkeymantic'])
 
     async def event_ready(self):
         print_with_timestamp(f'Logged in as | {self.nick}')
@@ -25,9 +23,17 @@ class TwitchBot(twitch_commands.Bot):
         if 'cheese' in message.content.lower():
             await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
 
-    @twitch_commands.command()
+    @twitch_commands.command(name='hello')
     async def hello(self, ctx: twitch_commands.Context):
         await ctx.send(f'Hello {ctx.author.name}!')
+
+    @twitch_commands.command(name='twitch_command1')
+    async def twitch_command1(self, ctx: twitch_commands.Context):
+        await ctx.send('This is the response for twitch command 1.')
+
+    @twitch_commands.command(name='twitch_command2')
+    async def twitch_command2(self, ctx: twitch_commands.Context):
+        await ctx.send('This is the response for twitch command 2.')
 
     async def send_twitch_message(self, content):
         channel = self.get_channel('funkeymantic')
