@@ -35,10 +35,4 @@ async def run_bots():
     print("Both bots are running.")
 
 # Run the bots
-if __name__ == "__main__":
-    print("Running bots...")
-    try:
-        asyncio.run(run_bots())
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
+if __name__
