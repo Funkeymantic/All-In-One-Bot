@@ -2,6 +2,7 @@ from twitchio.ext import commands as twitch_commands
 from .helpers import print_with_timestamp
 import os
 import aiohttp
+import time  # For cooldown management
 
 # Twitch bot class
 class TwitchBot(twitch_commands.Bot):
@@ -10,6 +11,10 @@ class TwitchBot(twitch_commands.Bot):
             raise ValueError("TWITCH_TOKEN is not set! Please check your .env file or environment variables.")
         
         super().__init__(token=os.getenv("TWITCH_TOKEN"), prefix='!', initial_channels=['funkeymantic'])
+        
+        # Store the last time the bot responded to "cheese"
+        self.last_cheese_response_time = 0
+        self.cheese_cooldown = 30  # Set cooldown to 30 seconds
 
     async def event_ready(self):
         print_with_timestamp(f'Logged in as | {self.nick}')
@@ -21,7 +26,10 @@ class TwitchBot(twitch_commands.Bot):
         await self.handle_commands(message)
 
         if 'cheese' in message.content.lower():
-            await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
+            current_time = time.time()  # Get the current time in seconds
+            if current_time - self.last_cheese_response_time >= self.cheese_cooldown:
+                await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
+                self.last_cheese_response_time = current_time  # Update the last response time
 
     @twitch_commands.command(name='hello')
     async def hello(self, ctx: twitch_commands.Context):
