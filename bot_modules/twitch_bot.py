@@ -12,7 +12,6 @@ class TwitchBot(twitch_commands.Bot):
         
         super().__init__(token=os.getenv("TWITCH_TOKEN"), prefix='!', initial_channels=['funkeymantic'])
         
-        # Store the last time the bot responded to "cheese"
         self.last_cheese_response_time = 0
         self.cheese_cooldown = 30  # Set cooldown to 30 seconds
 
@@ -20,23 +19,25 @@ class TwitchBot(twitch_commands.Bot):
         print_with_timestamp(f'Logged in as | {self.nick}')
         print_with_timestamp(f'User id is | {self.user_id}')  # Useful for debugging
 
+    # Correctly indented event_message function
     async def event_message(self, message):
-    # Ensure the bot does not respond to its own messages or if author is None
-    if message.author is None or message.author.id == self.user_id:
-        return
+        # Ensure the bot does not respond to its own messages or if author is None
+        if message.author is None or message.author.id == self.user_id:
+            return
 
-    # Print the message for logging
-    print_with_timestamp(message.content)
+        # Print the message for logging
+        print_with_timestamp(message.content)
 
-    # Handle commands if present
-    await self.handle_commands(message)
+        # Handle commands if present
+        await self.handle_commands(message)
 
-    # Respond to messages containing the word 'cheese', with cooldown
-    if 'cheese' in message.content.lower():
-        current_time = time.time()  # Get the current time in seconds
-        if current_time - self.last_cheese_response_time >= self.cheese_cooldown:
-            await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
-            self.last_cheese_response_time = current_time  # Update the last response time
+        # Respond to messages containing the word 'cheese', with cooldown
+        if 'cheese' in message.content.lower():
+            current_time = time.time()  # Get the current time in seconds
+            if current_time - self.last_cheese_response_time >= self.cheese_cooldown:
+                await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
+                self.last_cheese_response_time = current_time  # Update the last response time
+
 
     @twitch_commands.command(name='hello')
     async def hello(self, ctx: twitch_commands.Context):
