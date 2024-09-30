@@ -21,13 +21,10 @@ class TwitchBot(twitch_commands.Bot):
         # Ensure the bot does not respond to its own messages or if author is None
         if message.echo:
             return
-
         # Print the message for logging
         print_with_timestamp(message.content)
-
         # Handle commands if present
         await self.handle_commands(message)
-
         # Respond to messages containing the word 'cheese', with cooldown
         if 'cheese' in message.content.lower():
             await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
@@ -35,14 +32,6 @@ class TwitchBot(twitch_commands.Bot):
     @twitch_commands.command(name='hello')
     async def hello(self, ctx: twitch_commands.Context):
         await ctx.send(f'Hello {ctx.author.name}!')
-
-    @twitch_commands.command(name='twitch_command1')
-    async def twitch_command1(self, ctx: twitch_commands.Context):
-        await ctx.send('This is the response for twitch command 1.')
-
-    @twitch_commands.command(name='twitch_command2')
-    async def twitch_command2(self, ctx: twitch_commands.Context):
-        await ctx.send('This is the response for twitch command 2.')
 
     async def send_twitch_message(self, content):
         channel = self.get_channel('funkeymantic')
