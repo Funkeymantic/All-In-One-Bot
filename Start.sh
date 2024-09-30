@@ -35,7 +35,7 @@ function push_logs {
     cd "$REPO_DIR" || exit
 
     # Check for any changes to log files and commit them
-    git add "$LOG_DIR"/*.log
+    git add "$LOG_DIR"/*.log 2>/dev/null
     if git commit -m "Updated log files"; then
         git push origin $(git rev-parse --abbrev-ref HEAD)
         echo "Logs pushed to GitHub."
@@ -61,19 +61,17 @@ fi
 echo "Activating virtual environment..."
 source "$REPO_DIR/.venv/bin/activate"
 
-# Pull updates and restart the bot
-if update_repository; then
-    echo "Stopping the bot if it's running..."
-    pkill -f "python3 $REPO_DIR/main.py"
+# Pull updates (but always restart the bot regardless of updates)
+update_repository
 
-    # Run the bot
-    echo "Starting the bot..."
-    nohup python3 "$REPO_DIR/main.py" > "$LOG_DIR/bot.log" 2>&1 &
-    BOT_PID=$!
-    echo "Bot started with PID $BOT_PID"
-else
-    echo "Repository is up to date or an error occurred. No bot restart."
-fi
+echo "Stopping the bot if it's running..."
+pkill -f "python3 $REPO_DIR/main.py"
+
+# Run the bot
+echo "Starting the bot..."
+nohup python3 "$REPO_DIR/main.py" > "$LOG_DIR/bot.log" 2>&1 &
+BOT_PID=$!
+echo "Bot started with PID $BOT_PID"
 
 # Push log files to GitHub
 push_logs
