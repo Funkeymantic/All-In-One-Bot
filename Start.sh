@@ -77,3 +77,8 @@ echo "Bot started with PID $BOT_PID"
 push_logs
 
 echo "Resync and restart completed."
+
+# Starts Bot
+source /home/pcmartin/All-In-One-Bot/.venv/bin/activate
+python3 /home/pcmartin/All-In-One-Bot/main.py
+
