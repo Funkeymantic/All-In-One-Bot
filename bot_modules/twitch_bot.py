@@ -19,7 +19,7 @@ class TwitchBot(twitch_commands.Bot):
     # Correctly indented event_message function
     async def event_message(self, message):
         # Ensure the bot does not respond to its own messages or if author is None
-        if message.echo
+        if message.echo:
             return
 
         # Print the message for logging
