@@ -11,9 +11,6 @@ class TwitchBot(twitch_commands.Bot):
             raise ValueError("TWITCH_TOKEN is not set! Please check your .env file or environment variables.")
         
         super().__init__(token=os.getenv("TWITCH_TOKEN"), prefix='!', initial_channels=['funkeymantic'])
-        
-        self.last_cheese_response_time = 0
-        self.cheese_cooldown = 30  # Set cooldown to 30 seconds
 
     async def event_ready(self):
         print_with_timestamp(f'Logged in as | {self.nick}')
@@ -22,7 +19,7 @@ class TwitchBot(twitch_commands.Bot):
     # Correctly indented event_message function
     async def event_message(self, message):
         # Ensure the bot does not respond to its own messages or if author is None
-        if message.author is None or message.author.id == self.user_id:
+        if message.echo
             return
 
         # Print the message for logging
@@ -33,11 +30,7 @@ class TwitchBot(twitch_commands.Bot):
 
         # Respond to messages containing the word 'cheese', with cooldown
         if 'cheese' in message.content.lower():
-            current_time = time.time()  # Get the current time in seconds
-            if current_time - self.last_cheese_response_time >= self.cheese_cooldown:
-                await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
-                self.last_cheese_response_time = current_time  # Update the last response time
-
+            await message.channel.send(f'I claim your CHEESE, {message.author.name}!')
 
     @twitch_commands.command(name='hello')
     async def hello(self, ctx: twitch_commands.Context):
