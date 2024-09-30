@@ -18,13 +18,20 @@ class TwitchBot(twitch_commands.Bot):
 
     async def event_ready(self):
         print_with_timestamp(f'Logged in as | {self.nick}')
+        print_with_timestamp(f'User id is | {self.user_id}')  # Useful for debugging
 
     async def event_message(self, message):
-        if message.echo:
+        # Ensure the bot does not respond to its own messages
+        if message.author.id == self.user_id:
             return
+
+        # Print the message for logging
         print_with_timestamp(message.content)
+
+        # Handle commands if present
         await self.handle_commands(message)
 
+        # Respond to messages containing the word 'cheese', with cooldown
         if 'cheese' in message.content.lower():
             current_time = time.time()  # Get the current time in seconds
             if current_time - self.last_cheese_response_time >= self.cheese_cooldown:
